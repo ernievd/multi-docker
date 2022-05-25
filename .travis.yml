@@ -1,0 +1,35 @@
+
+language: generic
+sudo: required
+services:
+  - docker
+
+before_install: 
+  - docker build -t ernievd/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true ernievd/react-test npm run test
+
+after success:
+  - docker build -t ernievd/multi-client ./client
+  - docker build -t erniev/multi-nginx ./nginx
+  - docker build -t erniev/multi-server ./server
+  - docker build -t erniev/multi-worker ./worker
+
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push ernievd/multi-client
+  - docker push ernievd/multi-nginx
+  - docker push ernievd/multi-server
+  - docker push ernievd/multi-worker
+
+# deploy:
+#   provider: elasticbeanstalk
+#   region: "us-east-1"
+#   app: "docker"
+#   env: "Docker-env"
+#   bucket_name: "elasticbeanstalk-us-east-1-421474263769"
+#   bucket_path: "docker"
+#   on:
+#     branch: master
+#   access_key_id: $AWS_ACCESS_KEY
+#   secret_access_key: $AWS_SECRET_KEY
