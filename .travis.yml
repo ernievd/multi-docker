@@ -12,9 +12,9 @@ script:
 
 after success:
   - docker build -t ernievd/multi-client ./client
-  - docker build -t erniev/multi-nginx ./nginx
-  - docker build -t erniev/multi-server ./server
-  - docker build -t erniev/multi-worker ./worker
+  - docker build -t ernievd/multi-nginx ./nginx
+  - docker build -t ernievd/multi-server ./server
+  - docker build -t ernievd/multi-worker ./worker
 
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   - docker push ernievd/multi-client
